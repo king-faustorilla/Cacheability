@@ -1,147 +1,44 @@
-# Drinks API with Redis Storage
+Drinks API with Redis
+Overview
 
-## Overview
+This is my exercise on how to use Redis.
 
-This project is a simple REST API for managing drinks. In earlier versions, the data was stored in local JSON files. In this version, we replace file-based storage with **Redis**, using it both as a cache and as a primary data store.
+In this task, I took a simple REST API that originally stored data in local JSON files and changed it so that all data is stored in Redis instead. The main purpose was to practice and understand how Redis works in a real project.
 
-The goal of this task is to practice working with Redis using basic commands like `client.get` and `client.set`, while maintaining the same API structure as before.
+API Endpoints
 
----
+The API still includes the same endpoints:
 
-## Tech Stack
+GET /drinks – get all drinks
+GET /drinks/:id – get a single drink by id
+POST /drinks – add a new drink
+DELETE /drinks/:id – delete a drink
 
-* Node.js
-* Express.js
-* Redis (`node-redis` or similar client)
-* JSON-based data structure stored in Redis
+Each drink contains:
 
----
+id (number)
+name (string)
+ingredients (array of strings)
+description (string)
+How Redis is used
 
-## Data Model
+Instead of using a local JSON file, I store the data in Redis.
 
-Each **drink** has the following structure:
+I use:
 
-```json
-{
-  "id": 1,
-  "name": "Mojito",
-  "ingredients": ["Rum", "Mint", "Sugar", "Lime", "Soda Water"],
-  "description": "A refreshing Cuban cocktail."
-}
-```
+client.get() – to read data from Redis
+client.set() – to save updated data back to Redis
 
----
+All drinks are stored as a JSON string under a single Redis key.
 
-## Storage Strategy (Redis)
+Purpose of this exercise
 
-Instead of storing data in a JSON file, all drinks are stored in Redis.
+The goal of this exercise was to:
 
-A common approach is:
+Learn how to connect and use Redis
+Practice basic Redis commands
+Understand how Redis can replace simple file storage
+Work with data stored in memory instead of files
+Summary
 
-* Store all drinks under a single Redis key, e.g.:
-
-  ```
-  drinks
-  ```
-* The value is a JSON stringified array of drink objects.
-
-Example:
-
-```
-Key: drinks
-Value: "[{...}, {...}, {...}]"
-```
-
-### Redis Operations Used
-
-* `client.get("drinks")` → retrieve all drinks
-* `client.set("drinks", JSON.stringify(drinks))` → update the full list
-
----
-
-## API Endpoints
-
-### 1. Get all drinks
-
-```
-GET /drinks
-```
-
-Returns an array of all drinks stored in Redis.
-
----
-
-### 2. Get drink by ID
-
-```
-GET /drinks/:id
-```
-
-Returns a single drink that matches the provided ID.
-
----
-
-### 3. Add a new drink
-
-```
-POST /drinks
-```
-
-Request body:
-
-```json
-{
-  "name": "Mojito",
-  "ingredients": ["Rum", "Mint", "Sugar", "Lime", "Soda Water"],
-  "description": "A refreshing Cuban cocktail."
-}
-```
-
-* Generates a unique `id`
-* Adds the drink to Redis storage
-
----
-
-### 4. Delete a drink
-
-```
-DELETE /drinks/:id
-```
-
-Removes the drink with the specified ID from Redis.
-
----
-
-## How It Works
-
-1. On each request, the server reads the current drinks list from Redis using `GET`.
-2. The JSON string is parsed into an array.
-3. Any modifications (add/delete/update) are performed in memory.
-4. The updated array is saved back to Redis using `SET`.
-
----
-
-## Why Redis?
-
-Using Redis instead of a local JSON file provides:
-
-* Faster read/write operations
-* Better scalability
-* Simpler transition toward distributed systems
-* Built-in caching capabilities (useful for future improvements)
-
----
-
-## Possible Improvements
-
-* Store each drink as a separate Redis key instead of a single array
-* Add TTL (time-to-live) for cached data
-* Use Redis hashes for more efficient updates
-* Add validation for request bodies
-* Introduce pagination for large datasets
-
----
-
-## Summary
-
-This task demonstrates how Redis can be used not only as a cache, but also as a lightweight data store. By replacing file-based storage with Redis, the API becomes more flexible and closer to production-style architecture.
+This is a simple practice project for learning how Redis works by using it in a basic CRUD API.
